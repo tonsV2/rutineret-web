@@ -3,6 +3,7 @@ import type { FormEvent } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import type { UserProfileRequest } from '../types';
 import Layout from '../components/layout/Layout';
+import { getFullAvatarUrl } from '../utils/constants';
 
 const ProfilePage: React.FC = () => {
   const { user, updateProfile, updateUser, isLoading } = useAuth();
@@ -167,11 +168,23 @@ const ProfilePage: React.FC = () => {
                         <div className="mt-1 flex items-center space-x-6">
                           <div className="shrink-0">
                             {avatarPreview ? (
-                              <img
-                                className="h-16 w-16 object-cover rounded-full"
-                                src={avatarPreview}
-                                alt="Profile avatar"
-                              />
+                              <>
+                                <img
+                                  className="h-16 w-16 object-cover rounded-full"
+                                  src={avatarPreview.startsWith('data:') ? avatarPreview : getFullAvatarUrl(avatarPreview)!}
+                                  alt="Profile avatar"
+                                  crossOrigin="anonymous"
+                                  onError={(e) => {
+                                    e.currentTarget.style.display = 'none';
+                                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                                  }}
+                                />
+                                <div className="h-16 w-16 bg-gray-300 rounded-full flex items-center justify-center hidden">
+                                  <svg className="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                  </svg>
+                                </div>
+                              </>
                             ) : (
                               <div className="h-16 w-16 bg-gray-300 rounded-full flex items-center justify-center">
                                 <svg className="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

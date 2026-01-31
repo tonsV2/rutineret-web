@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { getFullAvatarUrl } from '../../utils/constants';
 
 const Header: React.FC = () => {
   const { isAuthenticated, user, logout, isLoading } = useAuth();
@@ -77,12 +78,24 @@ const Header: React.FC = () => {
               <div className="flex items-center space-x-4">
                 {/* User Avatar/Info */}
                 <div className="flex items-center space-x-3">
-                  {user?.profile.avatar ? (
-                    <img
-                      src={user.profile.avatar}
-                      alt={user.username}
-                      className="h-8 w-8 rounded-full object-cover"
-                    />
+                  {user?.profile.avatar && getFullAvatarUrl(user.profile.avatar) ? (
+                    <>
+                      <img
+                        src={getFullAvatarUrl(user.profile.avatar)!}
+                        alt={user.username}
+                        className="h-8 w-8 rounded-full object-cover"
+                        crossOrigin="anonymous"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                        }}
+                      />
+                      <div className="h-8 w-8 bg-gray-300 rounded-full flex items-center justify-center hidden">
+                        <span className="text-xs font-medium text-gray-600">
+                          {user?.username.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    </>
                   ) : (
                     <div className="h-8 w-8 bg-gray-300 rounded-full flex items-center justify-center">
                       <span className="text-xs font-medium text-gray-600">

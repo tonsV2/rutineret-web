@@ -58,7 +58,31 @@ export const shouldRefreshToken = (token: string | null, thresholdMinutes: numbe
 
 // API and URL constants
 export const API_BASE_URL = 'http://localhost:8000/api';
+export const BACKEND_BASE_URL = 'http://localhost:8000';
 export const WEB_BASE_URL = 'http://localhost:5173';
+
+// Avatar URL helper
+export const getFullAvatarUrl = (avatarPath: string | null): string | null => {
+  if (!avatarPath) return null;
+  
+  // If it's already a full URL, return as-is
+  if (avatarPath.startsWith('http://') || avatarPath.startsWith('https://')) {
+    return avatarPath;
+  }
+  
+  // If it's a DataURL (base64), return as-is
+  if (avatarPath.startsWith('data:')) {
+    return avatarPath;
+  }
+  
+  // If it starts with /media/ or /static/, combine with backend URL
+  if (avatarPath.startsWith('/')) {
+    return `${BACKEND_BASE_URL}${avatarPath}`;
+  }
+  
+  // If it's a relative path, combine with backend URL
+  return `${BACKEND_BASE_URL}/${avatarPath}`;
+};
 
 // Form validation helpers
 export const validateEmail = (email: string): boolean => {

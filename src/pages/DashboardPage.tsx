@@ -2,45 +2,20 @@ import React from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { formatDate } from '../utils/constants';
 import { Link } from 'react-router-dom';
+import Layout from '../components/layout/Layout';
 
 const DashboardPage: React.FC = () => {
-  const { user, logout } = useAuth();
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
-  };
+  const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-              <p className="mt-1 text-sm text-gray-600">Welcome back, {user?.first_name || user?.username}!</p>
-            </div>
-            <div className="flex space-x-4">
-              <Link
-                to="/profile"
-                className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-              >
-                Profile
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
+    <Layout>
+      {/* Page Header */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+          <p className="mt-1 text-sm text-gray-600">Welcome back, {user?.first_name || user?.username}!</p>
         </div>
-      </header>
+      </div>
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -205,7 +180,7 @@ const DashboardPage: React.FC = () => {
           </div>
         </div>
       </main>
-    </div>
+    </Layout>
   );
 };
 

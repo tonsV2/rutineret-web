@@ -1,4 +1,5 @@
 import React from 'react';
+import Header from './Header';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -7,7 +8,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header is already included in individual pages */}
+      <Header />
       <main>{children}</main>
       
       {/* Footer */}

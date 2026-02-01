@@ -1,5 +1,16 @@
 // API Response Types based on OpenAPI schema
 
+export interface TodayTasksResponse {
+    date: string;
+    tasks: Task[];
+    stats: {
+        total_due: number;
+        completed_today: number;
+        remaining_today: number;
+        completion_rate: number;
+    };
+}
+
 export interface Role {
   id: number;
   name: string;

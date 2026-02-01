@@ -36,7 +36,7 @@ const TodayPage: React.FC = () => {
       setError(null);
       const dateStr = formatDateForAPI(selectedDate);
       const response = await apiService.getTodayTasks(dateStr);
-      setTasks(response.data);
+      setTasks(response.data.tasks);
     } catch (err) {
       setError('Failed to load today\'s tasks. Please try again.');
       console.error('Error fetching today\'s tasks:', err);

@@ -1,26 +1,26 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosResponse } from 'axios';
-import type { 
-  LoginRequest, 
-  User, 
-  UserRegistrationRequest, 
-  UserProfile, 
-  UserProfileRequest,
-  UserRequest,
-  TokenRefresh,
-  PaginatedUserList,
-  PaginatedRoleList,
-  SocialAccount,
-  Routine,
-  RoutineRequest,
-  PatchedRoutineRequest,
-  Task,
-  TaskRequest,
-  PatchedTaskRequest,
-  TaskCompleteRequest,
-  TaskCompletion,
-  PaginatedTaskCompletionListList,
-  RoutineStats
+import type {
+    LoginRequest,
+    User,
+    UserRegistrationRequest,
+    UserProfile,
+    UserProfileRequest,
+    UserRequest,
+    TokenRefresh,
+    PaginatedUserList,
+    PaginatedRoleList,
+    SocialAccount,
+    Routine,
+    RoutineRequest,
+    PatchedRoutineRequest,
+    Task,
+    TaskRequest,
+    PatchedTaskRequest,
+    TaskCompleteRequest,
+    TaskCompletion,
+    PaginatedTaskCompletionListList,
+    RoutineStats, TodayTasksResponse
 } from '../types';
 
 const API_BASE_URL = 'http://localhost:8000/api';
@@ -231,8 +231,8 @@ class ApiService {
   }
 
   // Routine endpoints
-  async getTodayTasks(date?: string): Promise<AxiosResponse<Task[]>> {
-    return this.api.get<Task[]>('/routines/today/', {
+  async getTodayTasks(date?: string): Promise<AxiosResponse<TodayTasksResponse>> {
+    return this.api.get<TodayTasksResponse>('/routines/today/', {
       params: date ? { date } : {},
     });
   }

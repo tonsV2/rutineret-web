@@ -9,6 +9,7 @@ import DashboardPage from './pages/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
 import TodayPage from './pages/TodayPage';
 import RoutinesPage from './pages/RoutinesPage';
+import RoutineDetailPage from './pages/RoutineDetailPage';
 
 function App() {
   return (
@@ -38,6 +39,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <RoutinesPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/routines/:id" 
+              element={
+                <ProtectedRoute>
+                  <RoutineDetailPage />
                 </ProtectedRoute>
               } 
             />

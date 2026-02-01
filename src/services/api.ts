@@ -119,6 +119,47 @@ class ApiService {
     return this.api.get<User>('/auth/me/');
   }
 
+  // Google OAuth endpoints
+  async getGoogleAuthUrl(): Promise<AxiosResponse<{ authorization_url: string }>> {
+    return this.api.get<{ authorization_url: string }>('/auth/google/');
+  }
+
+  async handleGoogleCallback(code: string): Promise<AxiosResponse<User>> {
+    const response = await this.api.post<User>('/auth/google/callback/', { 
+      code: code 
+    });
+    
+    // Store tokens if returned
+    if (response.data) {
+      const responseData = response.data as any;
+      const tokens = responseData.access && responseData.refresh ? responseData : responseData.tokens || {};
+      
+      if (tokens.access) {
+        localStorage.setItem('access_token', tokens.access as string);
+      }
+      if (tokens.refresh) {
+        localStorage.setItem('refresh_token', tokens.refresh as string);
+      }
+    }
+    
+    return response;
+  }
+
+  // New method to handle OAuth2 authorization code flow
+  async exchangeCodeForTokens(code: string): Promise<AxiosResponse<{access: string, refresh: string, user: User}>> {
+    return this.api.post<{access: string, refresh: string, user: User}>('/auth/google/callback/', { 
+      code: code 
+    });
+  }
+
+  async getSocialAccounts(): Promise<AxiosResponse<{ social_accounts: any[] }>> {
+    return this.api.get<{ social_accounts: any[] }>('/auth/social-accounts/');
+  }
+
+  async unlinkSocialAccount(accountId: number): Promise<AxiosResponse<{ message: string }>> {
+    return this.api.delete<{ message: string }>(`/auth/social-accounts/${accountId}/unlink/`);
+  }
+
   async getUserDetails(): Promise<AxiosResponse<User>> {
     return this.api.get<User>('/auth/user/');
   }

@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { AuthContext } from './AuthContext';
 import type { User, UserRegistrationRequest, UserProfileRequest, UserRequest, AuthState } from '../types';
@@ -20,6 +20,9 @@ type AuthAction =
   | { type: 'REGISTER_START' }
   | { type: 'REGISTER_SUCCESS'; payload: User }
   | { type: 'REGISTER_FAILURE'; payload: string }
+  | { type: 'GOOGLE_SIGNIN_START' }
+  | { type: 'GOOGLE_SIGNIN_SUCCESS'; payload: User }
+  | { type: 'GOOGLE_SIGNIN_FAILURE'; payload: string }
   | { type: 'LOAD_USER_START' }
   | { type: 'LOAD_USER_SUCCESS'; payload: User }
   | { type: 'LOAD_USER_FAILURE' }
@@ -33,6 +36,7 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
   switch (action.type) {
     case 'LOGIN_START':
     case 'REGISTER_START':
+    case 'GOOGLE_SIGNIN_START':
       return { ...state, isLoading: true, error: null };
     
     case 'LOAD_USER_START':
@@ -40,6 +44,7 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
     
     case 'LOGIN_SUCCESS':
     case 'REGISTER_SUCCESS':
+    case 'GOOGLE_SIGNIN_SUCCESS':
     case 'LOAD_USER_SUCCESS':
     case 'REFRESH_TOKEN_SUCCESS':
       return {
@@ -52,6 +57,7 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
     
     case 'LOGIN_FAILURE':
     case 'REGISTER_FAILURE':
+    case 'GOOGLE_SIGNIN_FAILURE':
       return {
         ...state,
         user: null,
@@ -98,9 +104,14 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
+  const isLoadingUserRef = useRef(false);
 
   // Load user on app start
   useEffect(() => {
+    // Prevent concurrent user loading attempts
+    if (isLoadingUserRef.current) return;
+    isLoadingUserRef.current = true;
+
     const loadUser = async () => {
       const token = localStorage.getItem('access_token');
       if (token) {
@@ -119,7 +130,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
     };
 
-    loadUser();
+    loadUser().finally(() => {
+      isLoadingUserRef.current = false;
+    });
   }, []);
 
   const login = async (email: string, password: string): Promise<void> => {
@@ -206,6 +219,76 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const googleSignIn = async (_idToken: string): Promise<{ success: boolean; error?: string }> => {
+    // For OAuth2 redirect flow, this method won't be used
+    // The redirect handles everything, but keeping method for consistency
+    try {
+      dispatch({ type: 'GOOGLE_SIGNIN_START' });
+      // const response = await apiService.handleGoogleCallback(idToken);
+      // dispatch({ type: 'GOOGLE_SIGNIN_SUCCESS', payload: response.data });
+      return { success: true };
+    } catch (error: unknown) {
+      const errorMessage = error && typeof error === 'object' && 'response' in error 
+        ? ((error as { response?: { data?: { detail?: string } } }).response?.data?.detail || 'Google sign-in failed')
+        : 'Google sign-in failed';
+      dispatch({ type: 'GOOGLE_SIGNIN_FAILURE', payload: errorMessage });
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  // New method to handle OAuth callback success
+  const handleGoogleOAuthSuccess = async (code: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      dispatch({ type: 'GOOGLE_SIGNIN_START' });
+      
+      const response = await apiService.exchangeCodeForTokens(code);
+      const { access, refresh, user } = response.data;
+      
+      // Store tokens in localStorage
+      localStorage.setItem('access_token', access);
+      localStorage.setItem('refresh_token', refresh);
+      
+      // Update auth state
+      dispatch({ type: 'GOOGLE_SIGNIN_SUCCESS', payload: user });
+      
+      return { success: true };
+    } catch (error: unknown) {
+      const errorMessage = error && typeof error === 'object' && 'response' in error 
+        ? ((error as { response?: { data?: { detail?: string } } }).response?.data?.detail || 'Google sign-in failed')
+        : 'Google sign-in failed';
+      dispatch({ type: 'GOOGLE_SIGNIN_FAILURE', payload: errorMessage });
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  // New method to complete OAuth sign-in with tokens from URL
+  const completeOAuthSignIn = async (accessToken: string, refreshToken: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      dispatch({ type: 'GOOGLE_SIGNIN_START' });
+      
+      // Store tokens in localStorage
+      localStorage.setItem('access_token', accessToken);
+      if (refreshToken) {
+        localStorage.setItem('refresh_token', refreshToken);
+      }
+      
+      // Get user data using the access token
+      const userResponse = await apiService.getCurrentUser();
+      const userData = userResponse.data;
+      
+      // Update auth context state
+      dispatch({ type: 'GOOGLE_SIGNIN_SUCCESS', payload: userData });
+      
+      return { success: true };
+    } catch (error: unknown) {
+      const errorMessage = error && typeof error === 'object' && 'response' in error 
+        ? ((error as { response?: { data?: { detail?: string } } }).response?.data?.detail || 'Failed to complete sign-in')
+        : 'Failed to complete sign-in';
+      dispatch({ type: 'GOOGLE_SIGNIN_FAILURE', payload: errorMessage });
+      return { success: false, error: errorMessage };
+    }
+  };
+
   const clearError = (): void => {
     dispatch({ type: 'CLEAR_ERROR' });
   };
@@ -214,6 +297,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     ...state,
     login,
     register,
+    googleSignIn,
+    handleGoogleOAuthSuccess,
+    completeOAuthSignIn,
     logout,
     refreshToken,
     updateProfile,

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { GoogleSignInButton } from './GoogleSignInButton';
 import { validateEmail, validatePassword, validateUsername } from '../../utils/constants';
 
 interface RegisterFormData {
@@ -113,7 +114,11 @@ const RegisterForm: React.FC = () => {
           </p>
         </div>
         
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <div className="mt-6">
+          <GoogleSignInButton mode="register" />
+        </div>
+        
+        <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>

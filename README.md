@@ -1,3 +1,11 @@
+## TODO
+
+* Lots of unused functions in [constants.ts](src/utils/constants.ts) and [api.ts](src/services/api.ts) has a lot of
+  wrappers which should be removed since it doesn't scale and they're large just one-liners
+* [index.ts](src/types/index.ts) should be generated
+* Why is updateProfile and updateUser part of auth?
+
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

@@ -10,5 +10,12 @@ export default defineConfig({
             plugins: [tailwindcss()],
         },
     },
+    server: {
+        cors: true,
+        headers: {
+            'Cross-Origin-Opener-Policy': 'unsafe-none',
+            'Cross-Origin-Embedder-Policy': 'require-corp'
+        }
+    }
 
 })

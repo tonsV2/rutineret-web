@@ -20,6 +20,13 @@ export interface UserProfile {
   updated_at: string;
 }
 
+export interface SocialAccount {
+  id: number;
+  provider: string;
+  uid: string;
+  provider_display_name?: string;
+}
+
 export interface User {
   id: number;
   username: string;
@@ -30,6 +37,7 @@ export interface User {
   date_of_birth: string | null;
   is_verified: boolean;
   profile: UserProfile;
+  social_accounts: SocialAccount[];
   created_at: string;
   updated_at: string;
 }
@@ -103,6 +111,9 @@ export interface AuthState {
 export interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<void>;
   register: (userData: UserRegistrationRequest) => Promise<void>;
+  googleSignIn: (idToken: string) => Promise<{ success: boolean; error?: string }>;
+  handleGoogleOAuthSuccess: (code: string) => Promise<{ success: boolean; error?: string }>;
+  completeOAuthSignIn: (accessToken: string, refreshToken: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   refreshToken: () => Promise<void>;
   updateProfile: (profileData: UserProfileRequest) => Promise<void>;

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { GoogleSignInButton } from './GoogleSignInButton';
 import { validateEmail } from '../../utils/constants';
 
 interface LoginFormData {
@@ -84,7 +85,11 @@ const LoginForm: React.FC = () => {
           </p>
         </div>
         
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <div className="mt-6">
+          <GoogleSignInButton mode="login" />
+        </div>
+        
+        <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <label htmlFor="email" className="sr-only">

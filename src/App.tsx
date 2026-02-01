@@ -1,7 +1,7 @@
-
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import OAuthCallbackHandler from './components/auth/OAuthCallbackHandler';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -18,6 +18,9 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            
+            {/* OAuth callback route */}
+            <Route path="/auth/google/callback" element={<OAuthCallbackHandler />} />
             
             {/* Protected routes */}
             <Route 

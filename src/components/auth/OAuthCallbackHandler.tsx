@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -6,7 +6,6 @@ const OAuthCallbackHandler: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { completeOAuthSignIn } = useAuth();
-const memoizedCompleteOAuthSignIn = useCallback(completeOAuthSignIn, []);
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('');
   const processingRef = useRef(false);
@@ -68,7 +67,7 @@ const memoizedCompleteOAuthSignIn = useCallback(completeOAuthSignIn, []);
     return () => {
       processingRef.current = false;
     };
-  }, [searchParams, navigate, memoizedCompleteOAuthSignIn]);
+  }, [searchParams, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">

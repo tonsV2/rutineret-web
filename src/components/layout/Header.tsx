@@ -49,6 +49,26 @@ const Header: React.FC = () => {
             {isAuthenticated && (
               <>
                 <Link
+                  to="/today"
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActivePath('/today')
+                      ? 'text-blue-600 bg-blue-50'
+                      : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                >
+                  Today
+                </Link>
+                <Link
+                  to="/routines"
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActivePath('/routines')
+                      ? 'text-blue-600 bg-blue-50'
+                      : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                >
+                  Routines
+                </Link>
+                <Link
                   to="/dashboard"
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     isActivePath('/dashboard')
@@ -202,6 +222,26 @@ const Header: React.FC = () => {
       {isAuthenticated && (
         <div className="md:hidden border-t border-gray-200">
           <div className="px-2 pt-2 pb-3 space-y-1">
+            <Link
+              to="/today"
+              className={`block px-3 py-2 rounded-md text-base font-medium ${
+                isActivePath('/today')
+                  ? 'text-blue-600 bg-blue-50'
+                  : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'
+              }`}
+            >
+              Today
+            </Link>
+            <Link
+              to="/routines"
+              className={`block px-3 py-2 rounded-md text-base font-medium ${
+                isActivePath('/routines')
+                  ? 'text-blue-600 bg-blue-50'
+                  : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'
+              }`}
+            >
+              Routines
+            </Link>
             <Link
               to="/dashboard"
               className={`block px-3 py-2 rounded-md text-base font-medium ${

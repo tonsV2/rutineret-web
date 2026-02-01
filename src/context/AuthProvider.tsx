@@ -219,7 +219,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const googleSignIn = async (_idToken: string): Promise<{ success: boolean; error?: string }> => {
+  const googleSignIn = async (): Promise<{ success: boolean; error?: string }> => {
     // For OAuth2 redirect flow, this method won't be used
     // The redirect handles everything, but keeping method for consistency
     try {

@@ -9,7 +9,18 @@ import type {
   UserRequest,
   TokenRefresh,
   PaginatedUserList,
-  PaginatedRoleList
+  PaginatedRoleList,
+  SocialAccount,
+  Routine,
+  RoutineRequest,
+  PatchedRoutineRequest,
+  Task,
+  TaskRequest,
+  PatchedTaskRequest,
+  TaskCompleteRequest,
+  TaskCompletion,
+  PaginatedTaskCompletionListList,
+  RoutineStats
 } from '../types';
 
 const API_BASE_URL = 'http://localhost:8000/api';
@@ -89,12 +100,12 @@ class ApiService {
     if (response.data) {
       // Assuming tokens are included in the response or set in cookies
       // If tokens are returned separately, adjust accordingly
-      const tokens = (response.data as { tokens?: { access?: unknown; refresh?: unknown } }).tokens || response.data as { access?: unknown; refresh?: unknown };
+      const tokens = response.data as { access?: string; refresh?: string; tokens?: { access?: string; refresh?: string } };
       if (tokens?.access) {
-        localStorage.setItem('access_token', tokens.access as string);
+        localStorage.setItem('access_token', tokens.access);
       }
       if (tokens?.refresh) {
-        localStorage.setItem('refresh_token', tokens.refresh as string);
+        localStorage.setItem('refresh_token', tokens.refresh);
       }
     }
     return response;
@@ -131,14 +142,14 @@ class ApiService {
     
     // Store tokens if returned
     if (response.data) {
-      const responseData = response.data as any;
+      const responseData = response.data as { access?: string; refresh?: string; tokens?: { access?: string; refresh?: string } };
       const tokens = responseData.access && responseData.refresh ? responseData : responseData.tokens || {};
       
       if (tokens.access) {
-        localStorage.setItem('access_token', tokens.access as string);
+        localStorage.setItem('access_token', tokens.access);
       }
       if (tokens.refresh) {
-        localStorage.setItem('refresh_token', tokens.refresh as string);
+        localStorage.setItem('refresh_token', tokens.refresh);
       }
     }
     
@@ -152,8 +163,8 @@ class ApiService {
     });
   }
 
-  async getSocialAccounts(): Promise<AxiosResponse<{ social_accounts: any[] }>> {
-    return this.api.get<{ social_accounts: any[] }>('/auth/social-accounts/');
+  async getSocialAccounts(): Promise<AxiosResponse<{ social_accounts: SocialAccount[] }>> {
+    return this.api.get<{ social_accounts: SocialAccount[] }>('/auth/social-accounts/');
   }
 
   async unlinkSocialAccount(accountId: number): Promise<AxiosResponse<{ message: string }>> {
@@ -217,6 +228,75 @@ class ApiService {
     return this.api.get<PaginatedRoleList>('/auth/roles/', {
       params: { page },
     });
+  }
+
+  // Routine endpoints
+  async getTodayTasks(date?: string): Promise<AxiosResponse<Task[]>> {
+    return this.api.get<Task[]>('/routines/today/', {
+      params: date ? { date } : {},
+    });
+  }
+
+  async getRoutines(): Promise<AxiosResponse<Routine[]>> {
+    return this.api.get<Routine[]>('/routines/routines/');
+  }
+
+  async createRoutine(routineData: RoutineRequest): Promise<AxiosResponse<Routine>> {
+    return this.api.post<Routine>('/routines/routines/', routineData);
+  }
+
+  async getRoutine(id: number): Promise<AxiosResponse<Routine>> {
+    return this.api.get<Routine>(`/routines/routines/${id}/`);
+  }
+
+  async updateRoutine(id: number, routineData: PatchedRoutineRequest): Promise<AxiosResponse<Routine>> {
+    return this.api.patch<Routine>(`/routines/routines/${id}/`, routineData);
+  }
+
+  async deleteRoutine(id: number): Promise<AxiosResponse<void>> {
+    return this.api.delete<void>(`/routines/routines/${id}/`);
+  }
+
+  // Task endpoints
+  async getTasks(routineId: number): Promise<AxiosResponse<Task[]>> {
+    return this.api.get<Task[]>(`/routines/routines/${routineId}/tasks/`);
+  }
+
+  async createTask(taskData: TaskRequest): Promise<AxiosResponse<Task>> {
+    return this.api.post<Task>(`/routines/routines/${taskData.routine}/tasks/`, taskData);
+  }
+
+  async getTask(id: number): Promise<AxiosResponse<Task>> {
+    return this.api.get<Task>(`/routines/tasks/${id}/`);
+  }
+
+  async updateTask(id: number, taskData: PatchedTaskRequest): Promise<AxiosResponse<Task>> {
+    return this.api.patch<Task>(`/routines/tasks/${id}/`, taskData);
+  }
+
+  async deleteTask(id: number): Promise<AxiosResponse<void>> {
+    return this.api.delete<void>(`/routines/tasks/${id}/`);
+  }
+
+  async completeTask(taskId: number, completionData?: TaskCompleteRequest): Promise<AxiosResponse<TaskCompletion>> {
+    return this.api.post<TaskCompletion>(`/routines/tasks/${taskId}/complete/`, completionData || {});
+  }
+
+  async reorderTasks(routineId: number, taskIds: number[]): Promise<AxiosResponse<{ message: string }>> {
+    return this.api.post<{ message: string }>(`/routines/routines/${routineId}/tasks/reorder/`, {
+      task_ids: taskIds,
+    });
+  }
+
+  // Completion and stats endpoints
+  async getCompletions(page = 1): Promise<AxiosResponse<PaginatedTaskCompletionListList>> {
+    return this.api.get<PaginatedTaskCompletionListList>('/routines/completions/', {
+      params: { page },
+    });
+  }
+
+  async getStats(): Promise<AxiosResponse<RoutineStats>> {
+    return this.api.get<RoutineStats>('/routines/stats/');
   }
 }
 

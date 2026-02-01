@@ -1,9 +1,14 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 const HomePage: React.FC = () => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
+
+  // Redirect authenticated users to today page
+  if (isAuthenticated) {
+    return <Navigate to="/today" replace />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -79,53 +84,28 @@ const HomePage: React.FC = () => {
       <div className="bg-gray-50">
         <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            {isAuthenticated ? (
-              <div>
-                <h2 className="text-3xl font-extrabold text-gray-900">
-                  Welcome back, {user?.first_name || user?.username}!
-                </h2>
-                <p className="mt-4 text-lg text-gray-600">
-                  You're already logged in. Ready to continue?
-                </p>
-                <div className="mt-8">
-                  <Link
-                    to="/dashboard"
-                    className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-                  >
-                    Go to Dashboard
-                  </Link>
-                  <Link
-                    to="/profile"
-                    className="ml-4 inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                  >
-                    View Profile
-                  </Link>
-                </div>
+            <div>
+              <h2 className="text-3xl font-extrabold text-gray-900">
+                Get Started Today
+              </h2>
+              <p className="mt-4 text-lg text-gray-600">
+                Join thousands of users who trust Rutineret for their routine management needs.
+              </p>
+              <div className="mt-8">
+                <Link
+                  to="/register"
+                  className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                >
+                  Sign Up Now
+                </Link>
+                <Link
+                  to="/login"
+                  className="ml-4 inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                >
+                  Sign In
+                </Link>
               </div>
-            ) : (
-              <div>
-                <h2 className="text-3xl font-extrabold text-gray-900">
-                  Get Started Today
-                </h2>
-                <p className="mt-4 text-lg text-gray-600">
-                  Join thousands of users who trust Rutineret for their authentication needs.
-                </p>
-                <div className="mt-8">
-                  <Link
-                    to="/register"
-                    className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-                  >
-                    Sign Up Now
-                  </Link>
-                  <Link
-                    to="/login"
-                    className="ml-4 inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                  >
-                    Sign In
-                  </Link>
-                </div>
-              </div>
-            )}
+            </div>
           </div>
         </div>
       </div>

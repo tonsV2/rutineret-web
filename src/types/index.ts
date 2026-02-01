@@ -132,3 +132,99 @@ export interface ApiResponse<T = unknown> {
   data: T;
   error?: ApiError;
 }
+
+// Routine and Task Types
+
+export type RecurrenceTypeEnum = 'daily' | 'workdays' | 'weekly' | 'monthly' | 'yearly';
+
+export interface Routine {
+  id: number;
+  user: string;
+  name: string;
+  description: string;
+  tasks: Task[];
+  tasks_count: string;
+  due_today_count: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RoutineRequest {
+  name: string;
+  description?: string;
+}
+
+export interface PatchedRoutineRequest {
+  name?: string;
+  description?: string;
+}
+
+export interface Task {
+  id: number;
+  routine: number;
+  routine_name: string;
+  title: string;
+  description: string;
+  order: number;
+  recurrence_type: RecurrenceTypeEnum;
+  recurrence_metadata: Record<string, unknown>;
+  is_due_today: boolean;
+  is_completed_today: boolean;
+  completions_count: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TaskRequest {
+  routine: number;
+  title: string;
+  description?: string;
+  order?: number;
+  recurrence_type: RecurrenceTypeEnum;
+  recurrence_metadata?: Record<string, unknown>;
+}
+
+export interface PatchedTaskRequest {
+  routine?: number;
+  title?: string;
+  description?: string;
+  order?: number;
+  recurrence_type?: RecurrenceTypeEnum;
+  recurrence_metadata?: Record<string, unknown>;
+}
+
+export interface TaskCompleteRequest {
+  completion_time?: string;
+}
+
+export interface TaskReorderRequest {
+  task_ids: number[];
+}
+
+export interface TaskCompletion {
+  id: number;
+  user: string;
+  task: number;
+  task_title: string;
+  completed_at: string;
+}
+
+export interface TaskCompletionList {
+  id: number;
+  user: string;
+  task: number;
+  task_title: string;
+  routine_name: string;
+  completed_at: string;
+}
+
+export interface PaginatedTaskCompletionListList {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: TaskCompletionList[];
+}
+
+export interface RoutineStats {
+  stats: Record<string, unknown>;
+}

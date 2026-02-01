@@ -7,6 +7,8 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
+import TodayPage from './pages/TodayPage';
+import RoutinesPage from './pages/RoutinesPage';
 
 function App() {
   return (
@@ -23,6 +25,22 @@ function App() {
             <Route path="/auth/google/callback" element={<OAuthCallbackHandler />} />
             
             {/* Protected routes */}
+            <Route 
+              path="/today" 
+              element={
+                <ProtectedRoute>
+                  <TodayPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/routines" 
+              element={
+                <ProtectedRoute>
+                  <RoutinesPage />
+                </ProtectedRoute>
+              } 
+            />
             <Route 
               path="/dashboard" 
               element={

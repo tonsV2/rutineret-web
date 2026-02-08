@@ -23,6 +23,7 @@ const ProfilePage: React.FC = () => {
     last_name: user?.last_name || '',
     phone: user?.phone || '',
     date_of_birth: user?.date_of_birth || '',
+    password: '', // Required field for UserRequest but optional for updates
   });
   
   const [avatarPreview, setAvatarPreview] = useState<string | null>(

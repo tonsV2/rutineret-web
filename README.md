@@ -5,7 +5,6 @@
 * [index.ts](src/types/index.ts) should be generated
 * Why is updateProfile and updateUser part of auth?
 
-
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

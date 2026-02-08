@@ -10,7 +10,6 @@ import type {
     TokenRefresh,
     PaginatedUserList,
     PaginatedRoleList,
-    SocialAccount,
     Routine,
     RoutineRequest,
     PatchedRoutineRequest,
@@ -20,7 +19,8 @@ import type {
     TaskCompleteRequest,
     TaskCompletion,
     PaginatedTaskCompletionListList,
-    RoutineStats, TodayTasksResponse
+    TodayTasksResponse,
+    SocialAccount
 } from '../types';
 
 const API_BASE_URL = 'http://localhost:8000/api';
@@ -288,15 +288,11 @@ class ApiService {
     });
   }
 
-  // Completion and stats endpoints
+  // Completion endpoints
   async getCompletions(page = 1): Promise<AxiosResponse<PaginatedTaskCompletionListList>> {
     return this.api.get<PaginatedTaskCompletionListList>('/routines/completions/', {
       params: { page },
     });
-  }
-
-  async getStats(): Promise<AxiosResponse<RoutineStats>> {
-    return this.api.get<RoutineStats>('/routines/stats/');
   }
 }
 

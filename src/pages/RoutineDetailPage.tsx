@@ -51,7 +51,7 @@ const RoutineDetailPage: React.FC = () => {
       ]);
       
       setRoutine(routineResponse.data);
-      setTasks(tasksResponse.data.sort((a, b) => a.order - b.order));
+      setTasks(tasksResponse.data.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
     } catch (err) {
       setError('Failed to load routine details. Please try again.');
       console.error('Error fetching routine:', err);

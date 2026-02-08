@@ -98,7 +98,7 @@ const TodayPage: React.FC = () => {
     return Object.entries(groups)
       .map(([routineName, routineTasks]) => ({
         routineName,
-        tasks: routineTasks.sort((a, b) => a.order - b.order)
+        tasks: routineTasks.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
       }))
       .sort((a, b) => a.routineName.localeCompare(b.routineName));
   };

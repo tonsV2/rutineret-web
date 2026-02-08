@@ -476,7 +476,6 @@ const TaskCard: React.FC<{
                   <p className="text-sm text-gray-600 mt-1">{task.description}</p>
                 )}
                 <div className="flex items-center mt-2 space-x-4 text-xs text-gray-500">
-                  <span>Order: {task.order}</span>
                   <span>Recurrence: {task.recurrence_type}</span>
                   {task.is_due_today && (
                     <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">

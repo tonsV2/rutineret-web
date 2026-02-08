@@ -49,10 +49,16 @@ const TodayPage: React.FC = () => {
     try {
       setCompletingTaskIds(prev => new Set(prev).add(taskId));
       
-      // Mark task as complete
-      await apiService.completeTask(taskId);
+      const completionTime = new Date(selectedDate);
+      const now = new Date();
+      completionTime.setHours(now.getHours());
+      completionTime.setMinutes(now.getMinutes());
+      completionTime.setSeconds(now.getSeconds());
       
-      // Refresh tasks to update completion status
+      await apiService.completeTask(taskId, {
+        completion_time: completionTime.toISOString()
+      });
+
       await fetchTodayTasks();
     } catch (err) {
       console.error('Error completing task:', err);

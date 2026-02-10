@@ -282,6 +282,10 @@ class ApiService {
     return this.api.post<TaskCompletion>(`/routines/tasks/${taskId}/complete/`, completionData || {});
   }
 
+  async uncompleteTask(taskId: number): Promise<AxiosResponse<void>> {
+    return this.api.delete<void>(`/routines/tasks/${taskId}/complete/`);
+  }
+
   async reorderTasks(routineId: number, taskIds: number[]): Promise<AxiosResponse<{ message: string }>> {
     return this.api.post<{ message: string }>(`/routines/routines/${routineId}/tasks/reorder/`, {
       task_ids: taskIds,

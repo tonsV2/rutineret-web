@@ -15,10 +15,13 @@ const TodayPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [completingTaskIds, setCompletingTaskIds] = useState<Set<number>>(new Set());
+  const [togglingTaskIds, setTogglingTaskIds] = useState<Set<number>>(new Set());
 
   const formatDateForAPI = (date: Date): string => {
-    return date.toISOString().split('T')[0];
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
   };
 
   const formatDateForDisplay = (date: Date): string => {
@@ -45,26 +48,28 @@ const TodayPage: React.FC = () => {
     }
   };
 
-  const handleCompleteTask = async (taskId: number) => {
+  const handleToggleTaskCompletion = async (taskId: number) => {
     try {
-      setCompletingTaskIds(prev => new Set(prev).add(taskId));
-      
-      const completionTime = new Date(selectedDate);
-      const now = new Date();
-      completionTime.setHours(now.getHours());
-      completionTime.setMinutes(now.getMinutes());
-      completionTime.setSeconds(now.getSeconds());
-      
-      await apiService.completeTask(taskId, {
-        completion_time: completionTime.toISOString()
-      });
+      setTogglingTaskIds(prev => new Set(prev).add(taskId));
+      const task = tasks.find(t => t.id === taskId);
+
+      if (task?.is_completed_today) {
+        await apiService.uncompleteTask(taskId);
+      } else {
+        await apiService.completeTask(taskId, {});
+      }
 
       await fetchTodayTasks();
     } catch (err) {
-      console.error('Error completing task:', err);
-      setError('Failed to complete task. Please try again.');
+      console.error('Error toggling task completion:', err);
+      const error = err as any;
+      if (error.response?.data?.error?.includes('today')) {
+        setError('You can only uncomplete tasks that were completed today.');
+      } else {
+        setError('Failed to update task. Please try again.');
+      }
     } finally {
-      setCompletingTaskIds(prev => {
+      setTogglingTaskIds(prev => {
         const newSet = new Set(prev);
         newSet.delete(taskId);
         return newSet;
@@ -81,6 +86,11 @@ const TodayPage: React.FC = () => {
   const isToday = (date: Date): boolean => {
     const today = new Date();
     return date.toDateString() === today.toDateString();
+  };
+
+  const canToggleTask = (task: Task): boolean => {
+    if (!task.is_completed_today) return true;
+    return isToday(selectedDate);
   };
 
   // Group tasks by routine
@@ -261,11 +271,11 @@ const TodayPage: React.FC = () => {
                           <div className="ml-4">
                             {!task.is_completed_today ? (
                               <button
-                                onClick={() => handleCompleteTask(task.id)}
-                                disabled={completingTaskIds.has(task.id)}
+                                onClick={() => handleToggleTaskCompletion(task.id)}
+                                disabled={togglingTaskIds.has(task.id)}
                                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
                               >
-                                {completingTaskIds.has(task.id) ? (
+                                {togglingTaskIds.has(task.id) ? (
                                   <>
                                     <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -279,6 +289,29 @@ const TodayPage: React.FC = () => {
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                     </svg>
                                     Complete
+                                  </>
+                                )}
+                              </button>
+                            ) : canToggleTask(task) ? (
+                              <button
+                                onClick={() => handleToggleTaskCompletion(task.id)}
+                                disabled={togglingTaskIds.has(task.id)}
+                                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                              >
+                                {togglingTaskIds.has(task.id) ? (
+                                  <>
+                                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-green-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <span className="sr-only">Uncompleting...</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    Completed
                                   </>
                                 )}
                               </button>

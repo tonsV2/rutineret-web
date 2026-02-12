@@ -13,6 +13,7 @@ const ProfilePage: React.FC = () => {
     bio: user?.profile.bio || '',
     location: user?.profile.location || '',
     website: user?.profile.website || '',
+    timezone: (user?.profile as any)?.timezone || 'UTC',
     is_public: user?.profile.is_public || false,
   });
   
@@ -254,6 +255,42 @@ const ProfilePage: React.FC = () => {
                           value={profileData.website}
                           onChange={(e) => setProfileData(prev => ({ ...prev, website: e.target.value }))}
                         />
+                      </div>
+
+                      {/* Timezone */}
+                      <div className="col-span-6 sm:col-span-3">
+                        <label htmlFor="timezone" className="block text-sm font-medium text-gray-700">
+                          Timezone
+                        </label>
+                        <select
+                          id="timezone"
+                          name="timezone"
+                          className="shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
+                          value={profileData.timezone}
+                          onChange={(e) => setProfileData(prev => ({ ...prev, timezone: e.target.value }))}
+                        >
+                          <option value="UTC">UTC (Coordinated Universal Time)</option>
+                          <option value="America/New_York">Eastern Time (ET)</option>
+                          <option value="America/Chicago">Central Time (CT)</option>
+                          <option value="America/Denver">Mountain Time (MT)</option>
+                          <option value="America/Los_Angeles">Pacific Time (PT)</option>
+                          <option value="Europe/London">London (GMT/BST)</option>
+                          <option value="Europe/Paris">Paris (CET/CEST)</option>
+                          <option value="Europe/Berlin">Berlin (CET/CEST)</option>
+                          <option value="Asia/Tokyo">Tokyo (JST)</option>
+                          <option value="Asia/Shanghai">Shanghai (CST)</option>
+                          <option value="Asia/Kolkata">India (IST)</option>
+                          <option value="Australia/Sydney">Sydney (AEDT/AEST)</option>
+                          <option value="America/Toronto">Toronto (ET)</option>
+                          <option value="America/Vancouver">Vancouver (PT)</option>
+                          <option value="America/Mexico_City">Mexico City (CT)</option>
+                          <option value="America/Sao_Paulo">São Paulo (BRT)</option>
+                          <option value="Africa/Cairo">Cairo (EET)</option>
+                          <option value="Asia/Dubai">Dubai (GST)</option>
+                        </select>
+                        <p className="mt-1 text-xs text-gray-500">
+                          Used for scheduling task alarm notifications
+                        </p>
                       </div>
 
                       {/* Public Profile */}

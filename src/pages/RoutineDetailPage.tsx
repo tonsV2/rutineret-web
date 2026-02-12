@@ -3,9 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import apiService from '../services/api';
 import type { Routine, Task, TaskRequest, PatchedTaskRequest, RecurrenceTypeEnum } from '../types';
 import Layout from '../components/layout/Layout';
+import AlarmSettings from '../components/tasks/AlarmSettings.tsx';
 
 interface TaskFormData extends TaskRequest {
   id?: number;
+  due_time?: string | null;
+  alarm_enabled?: boolean;
+  alarm_minutes_before?: number;
 }
 
 const RoutineDetailPage: React.FC = () => {
@@ -27,7 +31,10 @@ const RoutineDetailPage: React.FC = () => {
     description: '',
     order: 0,
     recurrence_type: 'daily' as RecurrenceTypeEnum,
-    recurrence_metadata: {}
+    recurrence_metadata: {},
+    due_time: null, // Explicitly null to avoid undefined
+    alarm_enabled: false, // Explicitly false to avoid undefined
+    alarm_minutes_before: 15 // Safe default
   });
 
   // Recurrence options for simplified form
@@ -49,7 +56,7 @@ const RoutineDetailPage: React.FC = () => {
         apiService.getRoutine(routineId),
         apiService.getTasks(routineId)
       ]);
-      
+
       setRoutine(routineResponse.data);
       setTasks(tasksResponse.data.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
     } catch (err) {
@@ -67,7 +74,10 @@ const RoutineDetailPage: React.FC = () => {
       description: '',
       order: tasks.length,
       recurrence_type: 'daily' as RecurrenceTypeEnum,
-      recurrence_metadata: {}
+      recurrence_metadata: {},
+      due_time: null, // Explicitly null
+      alarm_enabled: false, // Explicitly false
+      alarm_minutes_before: 15 // Safe default
     });
     setEditingTask(null);
   };
@@ -78,19 +88,22 @@ const RoutineDetailPage: React.FC = () => {
 
     try {
       setSavingTask(true);
-      
+
       if (editingTask) {
         await apiService.updateTask(editingTask.id, {
           title: taskFormData.title,
           description: taskFormData.description,
           recurrence_type: taskFormData.recurrence_type,
           recurrence_metadata: taskFormData.recurrence_metadata,
-          order: taskFormData.order
+          order: taskFormData.order,
+          due_time: taskFormData.due_time,
+          alarm_enabled: taskFormData.alarm_enabled,
+          alarm_minutes_before: taskFormData.alarm_minutes_before
         } as PatchedTaskRequest);
       } else {
         await apiService.createTask(taskFormData);
       }
-      
+
       setShowTaskForm(false);
       resetTaskForm();
       await fetchRoutine();
@@ -111,7 +124,10 @@ const RoutineDetailPage: React.FC = () => {
       description: task.description,
       order: task.order,
       recurrence_type: task.recurrence_type,
-      recurrence_metadata: task.recurrence_metadata
+      recurrence_metadata: task.recurrence_metadata,
+      due_time: task.due_time || null,
+      alarm_enabled: task.alarm_enabled || false,
+      alarm_minutes_before: task.alarm_minutes_before || 15
     });
     setShowTaskForm(true);
   };
@@ -152,7 +168,7 @@ const RoutineDetailPage: React.FC = () => {
 
     // Update order values
     const taskIds = reorderedTasks.map(task => task.id);
-    
+
     try {
       await apiService.reorderTasks(routineId, taskIds);
       await fetchRoutine();
@@ -316,9 +332,9 @@ const RoutineDetailPage: React.FC = () => {
                       <select
                         id="recurrence_type"
                         value={taskFormData.recurrence_type}
-                        onChange={(e) => setTaskFormData({ 
-                          ...taskFormData, 
-                          recurrence_type: e.target.value as RecurrenceTypeEnum 
+                        onChange={(e) => setTaskFormData({
+                          ...taskFormData,
+                          recurrence_type: e.target.value as RecurrenceTypeEnum
                         })}
                         className="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm px-3 py-2 border"
                       >
@@ -330,6 +346,16 @@ const RoutineDetailPage: React.FC = () => {
                       </select>
                     </div>
                   </div>
+
+                  {/* Alarm Settings */}
+                  <AlarmSettings
+                    dueTime={taskFormData.due_time || null}
+                    alarmEnabled={taskFormData.alarm_enabled || false}
+                    alarmMinutesBefore={taskFormData.alarm_minutes_before || 15}
+                    onDueTimeChange={(time) => setTaskFormData({ ...taskFormData, due_time: time })}
+                    onAlarmEnabledChange={(enabled) => setTaskFormData({ ...taskFormData, alarm_enabled: enabled })}
+                    onAlarmMinutesBeforeChange={(minutes) => setTaskFormData({ ...taskFormData, alarm_minutes_before: minutes })}
+                  />
 
                   <div className="flex justify-end space-x-3 mt-6">
                     <button

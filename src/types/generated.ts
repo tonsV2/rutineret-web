@@ -93,7 +93,6 @@ export interface PatchedRoutineRequest {
 }
 
 export interface PatchedTaskRequest {
-  routine?: number;
   /**
    * @minLength 1
    * @maxLength 200
@@ -115,6 +114,20 @@ export interface PatchedTaskRequest {
    */
   recurrence_type?: RecurrenceTypeEnum;
   recurrence_metadata?: any;
+  /**
+   * Time of day when task is due
+   * @format time
+   */
+  due_time?: string | null;
+  /** Whether to send alarm reminders */
+  alarm_enabled?: boolean;
+  /**
+   * Minutes before due time to send alarm
+   * @format int64
+   * @min 0
+   * @max 9223372036854776000
+   */
+  alarm_minutes_before?: number;
 }
 
 export interface PatchedUserProfileRequest {
@@ -128,6 +141,12 @@ export interface PatchedUserProfileRequest {
    * @maxLength 200
    */
   website?: string;
+  /**
+   * User's timezone for alarm scheduling
+   * @minLength 1
+   * @maxLength 50
+   */
+  timezone?: string;
   role_ids?: number[];
   is_public?: boolean;
 }
@@ -224,6 +243,20 @@ export interface Task {
    */
   recurrence_type: RecurrenceTypeEnum;
   recurrence_metadata?: any;
+  /**
+   * Time of day when task is due
+   * @format time
+   */
+  due_time?: string | null;
+  /** Whether to send alarm reminders */
+  alarm_enabled?: boolean;
+  /**
+   * Minutes before due time to send alarm
+   * @format int64
+   * @min 0
+   * @max 9223372036854776000
+   */
+  alarm_minutes_before?: number;
   is_due_today: boolean;
   is_completed_today: boolean;
   completions_count: string;
@@ -269,7 +302,6 @@ export interface TaskReorderRequest {
 }
 
 export interface TaskRequest {
-  routine: number;
   /**
    * @minLength 1
    * @maxLength 200
@@ -291,6 +323,20 @@ export interface TaskRequest {
    */
   recurrence_type: RecurrenceTypeEnum;
   recurrence_metadata?: any;
+  /**
+   * Time of day when task is due
+   * @format time
+   */
+  due_time?: string | null;
+  /** Whether to send alarm reminders */
+  alarm_enabled?: boolean;
+  /**
+   * Minutes before due time to send alarm
+   * @format int64
+   * @min 0
+   * @max 9223372036854776000
+   */
+  alarm_minutes_before?: number;
 }
 
 /** Serializer for today's routine response. */
@@ -352,6 +398,11 @@ export interface UserProfile {
    * @maxLength 200
    */
   website?: string;
+  /**
+   * User's timezone for alarm scheduling
+   * @maxLength 50
+   */
+  timezone?: string;
   roles: Role[];
   is_public?: boolean;
   /** @format date-time */
@@ -371,6 +422,12 @@ export interface UserProfileRequest {
    * @maxLength 200
    */
   website?: string;
+  /**
+   * User's timezone for alarm scheduling
+   * @minLength 1
+   * @maxLength 50
+   */
+  timezone?: string;
   role_ids?: number[];
   is_public?: boolean;
 }

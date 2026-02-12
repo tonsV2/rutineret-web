@@ -26,7 +26,6 @@ const RoutineDetailPage: React.FC = () => {
   const [savingTask, setSavingTask] = useState(false);
   const [deletingTaskId, setDeletingTaskId] = useState<number | null>(null);
   const [taskFormData, setTaskFormData] = useState<TaskFormData>({
-    routine: routineId,
     title: '',
     description: '',
     order: 0,
@@ -69,7 +68,6 @@ const RoutineDetailPage: React.FC = () => {
 
   const resetTaskForm = () => {
     setTaskFormData({
-      routine: routineId,
       title: '',
       description: '',
       order: tasks.length,
@@ -101,7 +99,7 @@ const RoutineDetailPage: React.FC = () => {
           alarm_minutes_before: taskFormData.alarm_minutes_before
         } as PatchedTaskRequest);
       } else {
-        await apiService.createTask(taskFormData);
+        await apiService.createTask(routineId, taskFormData);
       }
 
       setShowTaskForm(false);
@@ -119,7 +117,6 @@ const RoutineDetailPage: React.FC = () => {
     setEditingTask(task);
     setTaskFormData({
       id: task.id,
-      routine: task.routine,
       title: task.title,
       description: task.description,
       order: task.order,

@@ -262,8 +262,8 @@ class ApiService {
     return this.api.get<Task[]>(`/routines/routines/${routineId}/tasks/`);
   }
 
-  async createTask(taskData: TaskRequest): Promise<AxiosResponse<Task>> {
-    return this.api.post<Task>(`/routines/routines/${taskData.routine}/tasks/`, taskData);
+  async createTask(routineId: number, taskData: TaskRequest): Promise<AxiosResponse<Task>> {
+    return this.api.post<Task>(`/routines/routines/${routineId}/tasks/`, taskData);
   }
 
   async getTask(id: number): Promise<AxiosResponse<Task>> {

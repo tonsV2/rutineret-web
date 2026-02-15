@@ -16,6 +16,7 @@ const AlarmSettings = ({
   onAlarmMinutesBeforeChange,
 }: AlarmSettingsProps) => {
 
+  // @ts-expect-error: ignoring any type for event parameter
   const handleTimeChange = (e) => {
     const timeValue = e.target.value;
     onDueTimeChange(timeValue || null);

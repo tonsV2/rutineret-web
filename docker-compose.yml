@@ -4,6 +4,6 @@ services:
     build:
       context: .
       args:
-        API_BASE_URL: ${VITE_API_BASE_URL}
+        VITE_API_URL: ${VITE_API_URL}
     ports:
       - "8080:8080"

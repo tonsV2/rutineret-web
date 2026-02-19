@@ -17,7 +17,7 @@ deploy:
           ingress:
             enabled: true
             hosts:
-              - host: rutineret.c.th.fitfit.dk
+              - host: "{{ .VITE_ENVIRONMENT }}rutineret.c.th.fitfit.dk"
                 paths:
                   - path: /
                     pathType: ImplementationSpecific

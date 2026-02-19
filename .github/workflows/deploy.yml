@@ -21,22 +21,27 @@ jobs:
             chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
           fi
 
-      - name: Set environment variables
+      - name: Set environment variables for tag
+        if: startsWith(github.ref, 'refs/tags/v')
         run: |
-          if [[ ${{ startsWith(github.ref, 'refs/tags/v') }} ]]; then
-            echo "IMAGE_TAG=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
-            echo "VITE_ENVIRONMENT=" >> $GITHUB_ENV
-            echo "VITE_API_URL=api.rutineret.c.th.fitfit.dk" >> $GITHUB_ENV
-          else
-            echo "IMAGE_TAG=latest" >> $GITHUB_ENV
-            echo "VITE_ENVIRONMENT=dev." >> $GITHUB_ENV
-            echo "VITE_API_URL=dev.api.rutineret.c.th.fitfit.dk" >> $GITHUB_ENV
-          fi
+          echo "IMAGE_TAG=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+          echo "VITE_ENVIRONMENT=" >> $GITHUB_ENV
+          echo "VITE_API_URL=api.rutineret.c.th.fitfit.dk" >> $GITHUB_ENV
+
+      - name: Set environment variables for master
+        if: github.ref == 'refs/heads/master'
+        run: |
+          echo "IMAGE_TAG=latest" >> $GITHUB_ENV
+          echo "VITE_ENVIRONMENT=dev." >> $GITHUB_ENV
+          echo "VITE_API_URL=dev.api.rutineret.c.th.fitfit.dk" >> $GITHUB_ENV
+
+      - name: Echo environment variables
+        run: env
+
+      - name: Login to Docker Hub
+        run: echo TODO
 
       - name: Build and push with Docker Compose
-        env:
-          VITE_API_URL: ${{ env.VITE_API_URL }}
-          IMAGE_TAG: ${{ env.IMAGE_TAG }}
         run: |
           docker compose build
           docker compose push
@@ -48,7 +53,4 @@ jobs:
           sudo mv skaffold-linux-amd64 /usr/local/bin/skaffold
 
       - name: Run Skaffold
-        env:
-          VITE_ENVIRONMENT: ${{ env.VITE_ENVIRONMENT }}
-          VITE_API_URL: ${{ env.VITE_API_URL }}
         run: skaffold run

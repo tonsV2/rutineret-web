@@ -22,15 +22,14 @@ import type {
     TodayTasksResponse,
     SocialAccount
 } from '../types';
-
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+import { API_URL } from '../utils/constants';
 
 class ApiService {
   private api: AxiosInstance;
 
   constructor() {
     this.api = axios.create({
-      baseURL: API_BASE_URL,
+      baseURL: API_URL,
       headers: {
         'Content-Type': 'application/json',
       },

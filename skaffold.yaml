@@ -5,7 +5,7 @@ build:
     - image: tons/rutineret-web
       docker:
         buildArgs:
-          API_BASE_URL: "{{ .VITE_API_BASE_URL }}"
+          VITE_API_URL: "{{ .VITE_API_URL }}"
 deploy:
   helm:
     releases:
@@ -13,10 +13,11 @@ deploy:
         namespace: rutineret
         createNamespace: true
         chartPath: charts/rutineret-web
-#        setValueTemplates:
-#          ingress:
-#            enabled: true
-#            hostname: "{{ .UI_HOSTNAME }}"
-#            certIssuer: cert-issuer-prod
-#        valuesFiles:
-#          - helm/data/values/{{ .CLASSIFICATION }}/values.yaml
+        setValueTemplates:
+          ingress:
+            enabled: true
+            hosts:
+              - host: rutineret.c.th.fitfit.dk
+                paths:
+                  - path: /
+                    pathType: ImplementationSpecific

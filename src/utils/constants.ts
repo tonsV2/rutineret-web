@@ -1,3 +1,12 @@
+// API and URL constants
+const VITE_API_URL = import.meta.env.VITE_API_URL;
+
+if (!VITE_API_URL) {
+  throw new Error('VITE_API_URL environment variable is required');
+}
+
+export const API_URL = VITE_API_URL;
+
 // Token management utilities
 export const TOKEN_KEY = 'access_token';
 export const REFRESH_TOKEN_KEY = 'refresh_token';
@@ -56,11 +65,6 @@ export const shouldRefreshToken = (token: string | null, thresholdMinutes: numbe
   }
 };
 
-// API and URL constants
-export const API_BASE_URL = 'http://localhost:8000/api';
-export const BACKEND_BASE_URL = 'http://localhost:8000';
-export const WEB_BASE_URL = 'http://localhost:5173';
-
 // Avatar URL helper
 export const getFullAvatarUrl = (avatarPath: string | null): string | null => {
   if (!avatarPath) return null;
@@ -75,13 +79,13 @@ export const getFullAvatarUrl = (avatarPath: string | null): string | null => {
     return avatarPath;
   }
   
-  // If it starts with /media/ or /static/, combine with backend URL
+  // If it starts with /media/ or /static/, combine with API URL
   if (avatarPath.startsWith('/')) {
-    return `${BACKEND_BASE_URL}${avatarPath}`;
+    return `${API_URL}${avatarPath}`;
   }
   
-  // If it's a relative path, combine with backend URL
-  return `${BACKEND_BASE_URL}/${avatarPath}`;
+  // If it's a relative path, combine with API URL
+  return `${API_URL}/${avatarPath}`;
 };
 
 // Form validation helpers

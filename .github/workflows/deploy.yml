@@ -36,6 +36,7 @@ jobs:
       - name: Build and push with Docker Compose
         env:
           VITE_API_URL: ${{ env.VITE_API_URL }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
         run: |
           docker compose build
           docker compose push

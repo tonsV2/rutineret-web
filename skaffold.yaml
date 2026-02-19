@@ -10,14 +10,14 @@ deploy:
   helm:
     releases:
       - name: rutineret-web
-        namespace: rutineret
+        namespace: rutineret-{{ .VITE_ENVIRONMENT }}
         createNamespace: true
         chartPath: charts/rutineret-web
         setValueTemplates:
           ingress:
             enabled: true
             hosts:
-              - host: "{{ .VITE_ENVIRONMENT }}rutineret.c.th.fitfit.dk"
+              - host: "{{ .DOMAIN }}"
                 paths:
                   - path: /
                     pathType: ImplementationSpecific

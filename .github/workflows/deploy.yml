@@ -46,11 +46,13 @@ jobs:
           docker compose build
           docker compose push
 
-      - name: Install Skaffold
+      - name: Setup Skaffold
         run: |
-          curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64
-          chmod +x skaffold-linux-amd64
-          sudo mv skaffold-linux-amd64 /usr/local/bin/skaffold
+          wget https://storage.googleapis.com/skaffold/releases/${VERSION}/${BINARY} -O ./skaffold
+          chmod +x ./skaffold
+        env:
+          VERSION: v2.6.0
+          BINARY: skaffold-linux-amd64
 
       - name: Run Skaffold
-        run: skaffold run
+        run: ./skaffold run

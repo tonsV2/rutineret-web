@@ -14,12 +14,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Set up Docker Compose
         run: |
           if ! command -v docker compose &> /dev/null; then
             curl -SL https://github.com/docker/compose/releases/download/v2.24.0/docker-compose-linux-x86_64 -o /usr/local/lib/docker/cli-plugins/docker-compose
             chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
           fi
+
+      - name: Install helm/helmfile/sops
+        uses: alexellis/arkade-get@master
+        with:
+          helm: v3.12.3
+          helmfile: v1.2.3
+          sops: v3.7.3
 
       - name: Set environment variables for tag
         if: startsWith(github.ref, 'refs/tags/v')

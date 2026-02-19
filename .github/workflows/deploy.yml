@@ -74,4 +74,4 @@ jobs:
           BINARY: skaffold-linux-amd64
 
       - name: Run Skaffold
-        run: ./skaffold run
+        run: ./skaffold deploy --images tons/rutineret-web:$IMAGE_TAG

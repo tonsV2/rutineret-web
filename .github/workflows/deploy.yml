@@ -36,7 +36,7 @@ jobs:
         run: |
           echo "IMAGE_TAG=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
           echo "VITE_ENVIRONMENT=prod" >> $GITHUB_ENV
-          echo "DOMAIN=rutineret.c.th.fitfit.dk" >> $GITHUB_ENV
+          echo "HOST=rutineret.c.th.fitfit.dk" >> $GITHUB_ENV
           echo "VITE_API_URL=api.rutineret.c.th.fitfit.dk" >> $GITHUB_ENV
 
       - name: Set environment variables for master
@@ -44,7 +44,7 @@ jobs:
         run: |
           echo "IMAGE_TAG=latest" >> $GITHUB_ENV
           echo "VITE_ENVIRONMENT=dev" >> $GITHUB_ENV
-          echo "DOMAIN=dev.rutineret.c.th.fitfit.dk" >> $GITHUB_ENV
+          echo "HOST=dev.rutineret.c.th.fitfit.dk" >> $GITHUB_ENV
           echo "VITE_API_URL=dev.api.rutineret.c.th.fitfit.dk" >> $GITHUB_ENV
 
       - name: Echo environment variables

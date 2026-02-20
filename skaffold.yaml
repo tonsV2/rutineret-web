@@ -17,7 +17,7 @@ deploy:
           ingress:
             enabled: true
             hosts:
-              - host: "{{ .DOMAIN }}"
+              - host: "{{ .HOST }}"
                 paths:
                   - path: /
                     pathType: ImplementationSpecific

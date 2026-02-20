@@ -77,3 +77,6 @@ jobs:
 
       - name: Run Skaffold
         run: ./skaffold deploy --images tons/rutineret-web:$IMAGE_TAG
+
+      - name: Show pods
+        run: kubectl get pods --all-namespaces

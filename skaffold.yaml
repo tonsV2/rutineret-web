@@ -10,7 +10,7 @@ deploy:
   helm:
     releases:
       - name: rutineret-web
-        namespace: rutineret-{{ .VITE_ENVIRONMENT }}
+        namespace: "rutineret-{{ .VITE_ENVIRONMENT }}"
         createNamespace: true
         chartPath: charts/rutineret-web
         setValueTemplates:
